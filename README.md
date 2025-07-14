@@ -37,19 +37,23 @@ A simple REST API built with NestJS, Prisma, PostgreSQL, and Docker to manage bo
 - Dockerized environment for easy deployment
 
 ---
+## 🧾 Project Structure
 
 ## 🧾 Project Structure
 
 📁 src
-┣ 📁 author # Author module (controller, service, DTOs)
-┣ 📁 book # Book module (controller, service, DTOs)
-┣ 📁 prisma # PrismaService + Prisma schema
-┣ 📜 app.module.ts # Root application module
-┗ 📜 main.ts # Application bootstrap
-📄 docker-compose.yml
-📄 Dockerfile
-📄 .env
-📄 README.md
+- ┣ 📁 author # Author module (controller, service, DTOs)
+- ┣ 📁 book # Book module (controller, service, DTOs)
+- ┣ 📁 prisma # PrismaService + Prisma schema
+- ┣ 📜 app.module.ts # Root application module
+- ┗ 📜 main.ts # Application bootstrap
+- 📄 docker-compose.yml
+- 📄 Dockerfile
+- 📄 .env
+- 📄 README.md
+
+
+---
 
 
 
