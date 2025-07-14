@@ -24,3 +24,10 @@ model Author {
   bio   String
   books Book[]
 }
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "./ERD/diagram.png"
+  format   = "png"
+}
+

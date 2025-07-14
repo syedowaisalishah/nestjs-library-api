@@ -117,13 +117,17 @@ docker-compose up --build
 Access API documentation at:
 
 ```bash
-http://localhost:3000/api
+You can explore and test all API endpoints using Swagger UI.
+
+👉 Open your browser and go to:
+
 ```
 
-You can use Swagger to:
-- Try POST, GET, PATCH, DELETE requests
-- See request/response format
-- View validation requirements
+http://localhost:3000/api
+### 📌 Swagger Features:
+- Auto-generated API docs
+- Interactive testing (POST, GET, PATCH, DELETE)
+- Error messages and validation hints
 
 ## 🔁 Sample API Requests (Using curl or Postman)
 
@@ -151,7 +155,62 @@ curl -X PATCH http://localhost:3000/author/1 \
 curl -X DELETE http://localhost:3000/author/1
 ```
 
+## 📭 Postman Collection (Alternative to Swagger)
+
+You can also test the API using Postman, especially helpful if you prefer GUI-based testing.
+
+📥 Download Collection
+Include your exported collection file in the repo:
+```bash
+nestjs-library-api.postman_collection.json
+```
+
+🧪 How to Use
+1. Open Postman → Import the collection.
+
+2. Set environment variable:
+```bash
+{{base_url}} = http://localhost:3000
+```
+
+3. Run the endpoints:
+
+- Create / Get / Update / Delete Authors
+- Create / Get / Update / Delete Books
+
+✅ Note: Swagger is available at http://localhost:3000/api as well.
+
+## 🐘 Connect PostgreSQL with DBeaver
+
+To connect your Dockerized PostgreSQL database with DBeaver:
+
+1. Open **DBeaver**.
+2. Click **Database > New Database Connection**.
+3. Select **PostgreSQL** and click **Next**.
+4. Fill in the connection settings:
+
+   | Field       | Value               |
+   |-------------|---------------------|
+   | Host        | `localhost`         |
+   | Port        | `5432`             |
+   | Database    | `postgres`          |
+   | Username    | `postgres`          |
+   | Password    | `*****`             |
+
+5. Test the connection, then click **Finish**.
+
+📸 Example:
+
+![PostgreSQL Connection Settings](./ScreenShots/PostgreSQL.png)
+
+> ✅ **Tip:** Make sure your PostgreSQL container is running:
+```bash
+docker-compose up -d
+```
+
+
 ## 📂 Prisma Schema Example
+
 ```bash
 model Author {
   id    Int     @id @default(autoincrement())
@@ -168,15 +227,17 @@ model Book {
   author    Author  @relation(fields: [authorId], references: [id])
 }
 ```
+## 📊 Entity Relationship Diagram (ERD)
+
+![ERD Diagram](./prisma/ERD/diagram.png)
 
 ## 💻 Contributing
 Feel free to fork this repo, open issues, or submit PRs.
 
 ## 🧠 Credits
-Developed by Syed Owais Ali Shah
-Built with using NestJS and Prisma
 
-
+Developed by [Syed Owais Ali Shah](https://github.com/syedowaisalishah)  
+Built with using NestJS and Prisma.
 
 ## License
 
