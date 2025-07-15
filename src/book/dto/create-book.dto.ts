@@ -1,6 +1,6 @@
 export class CreateBookDto {
   title: string;
   isbn: string;
-  year: number;
+  publicationYear : number;
   authorId: number;
 }

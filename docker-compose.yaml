@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  app:
+    container_name: library-system-app
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    command: npm run start:prod
+    networks:
+      - library-network
+
   postgres:
     image: postgres:15
     container_name: postgres
@@ -13,6 +26,11 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    networks:
+      - library-network
 
 volumes:
   db_data:
+
+networks:
+  library-network:

@@ -1,4 +1,4 @@
 export class CreateAuthorDto {
   name: string;
-  bio?: string;
+  bio: string;
 }
