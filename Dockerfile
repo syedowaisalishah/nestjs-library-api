@@ -1,5 +1,5 @@
-# Use the official Node.js 18 Alpine image
-FROM node:18-alpine
+# Use official Node.js 22 LTS slim image
+FROM node:22-slim
 
 # Set working directory inside the container
 WORKDIR /app
@@ -19,5 +19,11 @@ RUN npm run build
 # Expose the app port
 EXPOSE 3000
 
+COPY wait-for-it.sh ./wait-for-it.sh
+RUN chmod +x ./wait-for-it.sh
+
+
+
 # Start the app in production mode
 CMD ["npm", "run", "start:prod"]
+
