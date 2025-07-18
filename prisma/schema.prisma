@@ -22,10 +22,13 @@ model Book {
 
 
 model Author {
-  id    Int    @id @default(autoincrement())
-  name  String
-  bio   String
-  books Book[]
+  id       Int     @id @default(autoincrement())
+  name     String
+  bio      String
+  email    String  @unique
+  password String
+  books    Book[]
 }
+
 
 
