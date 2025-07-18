@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAuthorDto } from './create-author.dto';
+import { z } from 'zod';
+import { CreateAuthorZodSchema } from './create-author.dto';
 
-export class UpdateAuthorDto extends PartialType(CreateAuthorDto) {}
+// All fields optional for partial update
+export const UpdateAuthorZodSchema = CreateAuthorZodSchema.partial();
+
+export type UpdateAuthorDto = z.infer<typeof UpdateAuthorZodSchema>;
