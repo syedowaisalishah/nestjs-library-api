@@ -8,10 +8,6 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 export class AuthorRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateAuthorDto) {
-    return this.prisma.author.create({ data });
-  }
-
   async findAll() {
     return this.prisma.author.findMany({
       include: { books: true },

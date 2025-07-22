@@ -7,11 +7,6 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
-  @Post()
-  create(@Body() dto: CreateAuthorDto) {
-    return this.authorService.create(dto);
-  }
-
   @Get()
   findAll() {
     return this.authorService.findAll();
