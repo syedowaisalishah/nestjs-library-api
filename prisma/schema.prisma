@@ -14,7 +14,7 @@ datasource db {
 model Book {
   id              Int     @id @default(autoincrement())
   title           String
-  isbn            String
+  isbn            String  @unique
   publicationYear Int
   authorId        Int
   author          Author  @relation(fields: [authorId], references: [id])

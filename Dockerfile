@@ -7,6 +7,12 @@ WORKDIR /app
 # Copy package.json and package-lock.json to install dependencies
 COPY package*.json ./
 
+
+RUN apt-get update && apt-get install -y procps 
+
+RUN apt-get update && apt-get install -y openssl
+
+
 # Install dependencies
 RUN npm install
 
@@ -19,11 +25,9 @@ RUN npm run build
 # Expose the app port
 EXPOSE 3000
 
-COPY wait-for-it.sh ./wait-for-it.sh
-RUN chmod +x ./wait-for-it.sh
-
-
+# COPY wait-for-it.sh ./wait-for-it.sh
+# RUN chmod +x ./wait-for-it.sh
 
 # Start the app in production mode
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:dev"]
 

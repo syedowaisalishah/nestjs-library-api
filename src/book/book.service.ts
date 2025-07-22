@@ -1,42 +1,61 @@
+// src/book/book.service.ts
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import * as Boom from '@hapi/boom';
+import { BookRepository } from './book.repository';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly bookRepo: BookRepository) {}
 
-  create(data: CreateBookDto) {
-    return this.prisma.book.create({ data });
+  async create(data: CreateBookDto) {
+
+  console.log("owais")
+  const author = await this.bookRepo.findAuthorById(data.authorId);
+  if (!author) {
+    throw Boom.badRequest('Author does not exist');
   }
 
+  const existingTitle = await this.bookRepo.findByTitleAndAuthor(data.title, data.authorId);
+  if (existingTitle) {
+    console.log("hello")
+    throw Boom.conflict('Book with this title already exists for this author');
+  }
+  console.log(existingTitle)
+  const existingIsbn = await this.bookRepo.findByIsbn(data.isbn);
+  if (existingIsbn) {
+    console.log("hello owais")
+    throw Boom.conflict('A book with this ISBN already exists');
+  }
+  console.log(existingTitle)
+
+  try {
+    return await this.bookRepo.create(data);
+  } catch (error) {
+    throw Boom.internal('Unexpected database error');
+  }
+}
+
+
   findAll() {
-    return this.prisma.book.findMany({ include: { author: true } });
+    return this.bookRepo.findAll();
   }
 
   findOne(id: number) {
-    return this.prisma.book.findUnique({ where: { id } });
+    return this.bookRepo.findById(id);
   }
 
   update(id: number, data: UpdateBookDto) {
-    return this.prisma.book.update({ where: { id }, data });
+    return this.bookRepo.update(id, data);
   }
 
   remove(id: number) {
-    return this.prisma.book.delete({ where: { id } });
+    return this.bookRepo.delete(id);
   }
-  search(query: string) {
-  return this.prisma.book.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: 'insensitive' } },
-        { isbn: { contains: query, mode: 'insensitive' } },
-        { author: { name: { contains: query, mode: 'insensitive' } } },
-      ],
-    },
-    include: { author: true },
-  });
-}
 
+  search(query: string) {
+    return this.bookRepo.search(query);
+  }
 }
