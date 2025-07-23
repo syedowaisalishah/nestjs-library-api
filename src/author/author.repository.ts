@@ -13,6 +13,17 @@ export class AuthorRepository {
       include: { books: true },
     });
   }
+//   async findAll() {
+//   return this.prisma.author.findMany({
+//     select: {
+//       id: true,
+//       name: true,
+//       bio: true,
+//       email: true,
+//       books: true,
+//     },
+//   });
+// }
 
   async findById(id: number) {
     return this.prisma.author.findUnique({

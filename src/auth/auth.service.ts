@@ -18,16 +18,21 @@ export class AuthService {
   }
 
   async login(dto: LoginAuthorDto) {
-    const author = await this.authRepo.findByEmail(dto.email);
-    if (!author) throw Boom.unauthorized('Invalid email or password');
+  const author = await this.authRepo.findByEmail(dto.email);
+  if (!author) throw Boom.unauthorized('Invalid email or password');
 
-    const isMatch = await bcrypt.compare(dto.password, author.password);
-    if (!isMatch) throw Boom.unauthorized('Invalid email or password');
+  const isMatch = await bcrypt.compare(dto.password, author.password);
+  if (!isMatch) throw Boom.unauthorized('Invalid email or password');
 
-    const token = jwt.sign({ id: author.id, email: author.email }, 'your_jwt_secret', {
-      expiresIn: '1h',
-    });
+  const token = jwt.sign({ id: author.id, email: author.email }, 'your_jwt_secret', {
+    expiresIn: '1h',
+  });
 
-    return { access_token: token };
-  }
+  // ✅ Decode token (without verifying signature) to log its payload
+  const decoded = jwt.decode(token);
+  console.log('Decoded JWT payload:', decoded);
+
+  return { access_token: token };
+}
+
 }

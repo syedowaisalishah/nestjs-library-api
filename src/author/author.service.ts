@@ -27,4 +27,5 @@ export class AuthorService {
   remove(id: number) {
     return this.authorRepo.delete(id);
   }
+  
 }
