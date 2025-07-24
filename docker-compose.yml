@@ -10,7 +10,6 @@ services:
       - "3000:3000"
     volumes:
       - .:/app
-    command: ["./wait-for-it.sh", "postgres:5432", "--", "npm", "run", "start:dev"]
     env_file:
       - .env
     networks:
