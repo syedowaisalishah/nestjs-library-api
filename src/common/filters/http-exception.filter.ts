@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import * as Boom from '@hapi/boom';
+import { isBoom} from '@hapi/boom';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -14,7 +14,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    if (Boom.isBoom(exception)) {
+    if (isBoom(exception)) {
       const { statusCode, payload } = exception.output;
       return response.status(statusCode).json(payload);
     }

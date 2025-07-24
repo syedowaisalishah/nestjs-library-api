@@ -10,7 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, //use config file 
       load: [jwtConfig],
     }),
     AuthorModule,

@@ -1,6 +1,5 @@
 // src/author/author.service.ts
 import { Injectable } from '@nestjs/common';
-import * as Boom from '@hapi/boom';
 import { AuthorRepository } from './author.repository';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
