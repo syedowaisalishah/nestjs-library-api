@@ -139,7 +139,7 @@ http://localhost:3000/api
 ```bash
 curl -X POST http://localhost:3000/author \
 -H "Content-Type: application/json" \
--d '{"name":"Syed Owais Ali Shah","bio":"Software Engineer Student","email": "alishahowais@gmail.com","password":"********"}'
+-d '{"name":"Sharukh Khan","bio":"Actor","email": "kabhikhushikabhighum@gmail.com","password":"DonkoPakarnaMushkilHai"}'
 ```
 
 **🔍 Get All Authors**
