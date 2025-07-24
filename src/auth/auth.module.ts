@@ -9,17 +9,13 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
-    ConfigModule, //  required to use ConfigService
+    ConfigModule, // Required to use ConfigService
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService): Promise<JwtModuleOptions> => {
-  const config = configService.get<JwtModuleOptions>('jwt');
-  if (!config) {
-    throw new Error('JWT config is undefined');
-  }
-  return config;
-},
-
+        const config = configService.getOrThrow<JwtModuleOptions>('jwt');
+        return config;
+      },
     }),
   ],
   controllers: [AuthController],
@@ -29,6 +25,6 @@ import { JwtStrategy } from './strategy/jwt.strategy';
     PrismaService,
     JwtStrategy,
   ],
-  exports: [AuthService], 
+  exports: [AuthService],
 })
 export class AuthModule {}
