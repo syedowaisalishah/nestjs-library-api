@@ -10,14 +10,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signup(@Body() body: any) {
+  async signup(@Body() body: CreateAuthorDto) {
     try {
-      const dto: CreateAuthorDto = CreateAuthorZodSchema.parse(body);
-      return this.authService.signup(dto);
+      return this.authService.signup(body);
     } catch (err) {
-      if (err instanceof ZodError) {
-        throw Boom.badRequest(err.errors[0].message); // send clean error
-      }
       throw Boom.internal('Unexpected error');
     }
   }
