@@ -40,15 +40,18 @@ export class BookController {
     return this.bookService.findOne(+id);
   }
 
-  @Patch(':id')
+    @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateBookDto, @Req() req) {
-    return this.bookService.update(+id, dto);
+    const authorId = (req.user as any).id;
+    return this.bookService.update(+id, dto, authorId);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req) {
-    return this.bookService.remove(+id);
+    const authorId = (req.user as any).id;
+    return this.bookService.remove(+id, authorId);
   }
+
 
   @Get('search')
   search(@Query('q') q: string) {

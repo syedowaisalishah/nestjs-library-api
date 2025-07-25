@@ -1,6 +1,5 @@
-// src/book/book.service.ts
 import { Injectable } from '@nestjs/common';
-import { conflict, badRequest } from '@hapi/boom';
+import { conflict, badRequest, unauthorized } from '@hapi/boom';
 import { BookRepository } from './book.repository';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -13,9 +12,7 @@ export class BookService {
     const { title, isbn } = data;
 
     const author = await this.bookRepo.findAuthorById(authorId);
-    if (!author) {
-      throw badRequest('Author does not exist');
-    }
+    if (!author) throw badRequest('Author does not exist');
 
     const [existingTitle, existingIsbn] = await Promise.all([
       this.bookRepo.findByTitleAndAuthor(title, authorId),
@@ -30,12 +27,11 @@ export class BookService {
       );
     }
 
-    // Nest author relation properly for Prisma
     return this.bookRepo.create({
       title: data.title,
       isbn: data.isbn,
       publicationYear: data.publicationYear,
-      author: { connect: { id: authorId } }, // ✅ Fix here
+      author: { connect: { id: authorId } },
     });
   }
 
@@ -49,15 +45,25 @@ export class BookService {
     return book;
   }
 
-  async update(id: number, data: UpdateBookDto) {
-    const existing = await this.bookRepo.findById(id);
-    if (!existing) throw badRequest('Book not found');
+  async update(id: number, data: UpdateBookDto, authorId: number) {
+    const book = await this.bookRepo.findById(id);
+    if (!book) throw badRequest('Book not found');
+
+    if (book.authorId !== authorId) {
+      throw unauthorized('You are not allowed to update this book');
+    }
+
     return this.bookRepo.update(id, data);
   }
 
-  async remove(id: number) {
-    const existing = await this.bookRepo.findById(id);
-    if (!existing) throw badRequest('Book not found');
+  async remove(id: number, authorId: number) {
+    const book = await this.bookRepo.findById(id);
+    if (!book) throw badRequest('Book not found');
+
+    if (book.authorId !== authorId) {
+      throw unauthorized('You are not allowed to delete this book');
+    }
+
     return this.bookRepo.delete(id);
   }
 
