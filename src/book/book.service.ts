@@ -1,54 +1,57 @@
 // src/book/book.service.ts
 import { Injectable } from '@nestjs/common';
-import { conflict, internal, badRequest } from '@hapi/boom';
+import { conflict, badRequest } from '@hapi/boom';
 import { BookRepository } from './book.repository';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookService {
   constructor(private readonly bookRepo: BookRepository) {}
 
   async create(data: CreateBookDto) {
-  const { authorId } = data
-  
-  const author = await this.bookRepo.findAuthorById(authorId);
-  if (!author) {
-    throw badRequest('Author does not exist');
+    const { authorId, title, isbn } = data;
+
+    const author = await this.bookRepo.findAuthorById(authorId);
+    if (!author) {
+      throw badRequest('Author does not exist');
+    }
+
+    const [existingTitle, existingIsbn] = await Promise.all([
+      this.bookRepo.findByTitleAndAuthor(title, authorId),
+      this.bookRepo.findByIsbn(isbn),
+    ]);
+
+    if (existingTitle || existingIsbn) {
+      throw conflict(
+        existingTitle
+          ? 'Book with this title already exists for this author'
+          : 'A book with this ISBN already exists',
+      );
+    }
+
+    return this.bookRepo.create(data);
   }
 
-  const existingTitle = await this.bookRepo.findByTitleAndAuthor(data.title, data.authorId);
-  if (existingTitle) {
-    throw conflict('Book with this title already exists for this author');
-  }
-  console.log(existingTitle)
-  const existingIsbn = await this.bookRepo.findByIsbn(data.isbn);
-  if (existingIsbn) {
-    throw conflict('A book with this ISBN already exists');
-  }
-  console.log(existingTitle)
-
-  try {
-    return await this.bookRepo.create(data);
-  } catch (error) {
-    throw internal('Unexpected database error');
-  }
-}
-
-  findAll() {
+  async findAll() {
     return this.bookRepo.findAll();
   }
 
-  findOne(id: number) {
-    return this.bookRepo.findById(id);
+  async findOne(id: number) {
+    const book = await this.bookRepo.findById(id);
+    if (!book) throw badRequest('Book not found');
+    return book;
   }
 
-  update(id: number, data: UpdateBookDto) {
+  async update(id: number, data: UpdateBookDto) {
+    const existing = await this.bookRepo.findById(id);
+    if (!existing) throw badRequest('Book not found');
     return this.bookRepo.update(id, data);
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const existing = await this.bookRepo.findById(id);
+    if (!existing) throw badRequest('Book not found');
     return this.bookRepo.delete(id);
   }
 
