@@ -1,6 +1,9 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
+
+
 
 datasource db {
   provider = "postgresql"
@@ -11,7 +14,7 @@ datasource db {
 model Book {
   id              Int     @id @default(autoincrement())
   title           String
-  isbn            String
+  isbn            String  @unique
   publicationYear Int
   authorId        Int
   author          Author  @relation(fields: [authorId], references: [id])
@@ -19,15 +22,13 @@ model Book {
 
 
 model Author {
-  id    Int    @id @default(autoincrement())
-  name  String
-  bio   String
-  books Book[]
+  id       Int     @id @default(autoincrement())
+  name     String
+  bio      String
+  email    String  @unique
+  password String
+  books    Book[]
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output   = "./ERD/diagram.png"
-  format   = "png"
-}
+
 

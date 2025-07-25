@@ -1,42 +1,73 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { conflict, badRequest, unauthorized } from '@hapi/boom';
+import { BookRepository } from './book.repository';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @Injectable()
 export class BookService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly bookRepo: BookRepository) {}
 
-  create(data: CreateBookDto) {
-    return this.prisma.book.create({ data });
+  async create(data: CreateBookDto, authorId: number) {
+    const { title, isbn } = data;
+
+    const author = await this.bookRepo.findAuthorById(authorId);
+    if (!author) throw badRequest('Author does not exist');
+
+    const [existingTitle, existingIsbn] = await Promise.all([
+      this.bookRepo.findByTitleAndAuthor(title, authorId),
+      this.bookRepo.findByIsbn(isbn),
+    ]);
+
+    if (existingTitle || existingIsbn) {
+      throw conflict(
+        existingTitle
+          ? 'Book with this title already exists for this author'
+          : 'A book with this ISBN already exists',
+      );
+    }
+
+    return this.bookRepo.create({
+      title: data.title,
+      isbn: data.isbn,
+      publicationYear: data.publicationYear,
+      author: { connect: { id: authorId } },
+    });
   }
 
-  findAll() {
-    return this.prisma.book.findMany({ include: { author: true } });
+  async findAll() {
+    return this.bookRepo.findAll();
   }
 
-  findOne(id: number) {
-    return this.prisma.book.findUnique({ where: { id } });
+  async findOne(id: number) {
+    const book = await this.bookRepo.findById(id);
+    if (!book) throw badRequest('Book not found');
+    return book;
   }
 
-  update(id: number, data: UpdateBookDto) {
-    return this.prisma.book.update({ where: { id }, data });
+  async update(id: number, data: UpdateBookDto, authorId: number) {
+    const book = await this.bookRepo.findById(id);
+    if (!book) throw badRequest('Book not found');
+
+    if (book.authorId !== authorId) {
+      throw unauthorized('You are not allowed to update this book');
+    }
+
+    return this.bookRepo.update(id, data);
   }
 
-  remove(id: number) {
-    return this.prisma.book.delete({ where: { id } });
+  async remove(id: number, authorId: number) {
+    const book = await this.bookRepo.findById(id);
+    if (!book) throw badRequest('Book not found');
+
+    if (book.authorId !== authorId) {
+      throw unauthorized('You are not allowed to delete this book');
+    }
+
+    return this.bookRepo.delete(id);
   }
+
   search(query: string) {
-  return this.prisma.book.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: 'insensitive' } },
-        { isbn: { contains: query, mode: 'insensitive' } },
-        { author: { name: { contains: query, mode: 'insensitive' } } },
-      ],
-    },
-    include: { author: true },
-  });
-}
-
+    return this.bookRepo.search(query);
+  }
 }

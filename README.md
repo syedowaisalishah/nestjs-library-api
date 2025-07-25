@@ -139,7 +139,7 @@ http://localhost:3000/api
 ```bash
 curl -X POST http://localhost:3000/author \
 -H "Content-Type: application/json" \
--d '{"name":"J.K. Rowling","bio":"Author of Harry Potter"}'
+-d '{"name":"Sharukh Khan","bio":"Actor","email": "kabhikhushikabhighum@gmail.com","password":"DonkoPakarnaMushkilHai"}'
 ```
 
 **🔍 Get All Authors**
@@ -205,7 +205,7 @@ To connect your Dockerized PostgreSQL database with DBeaver:
 
 📸 Example:
 
-![PostgreSQL Connection Settings](./ScreenShots/PostgreSQL.png)
+![PostgreSQL Connection Settings](./images/PostgreSQL.png)
 
 > ✅ **Tip:** Make sure your PostgreSQL container is running:
 ```bash
@@ -233,7 +233,7 @@ model Book {
 ```
 ## 📊 Entity Relationship Diagram (ERD)
 
-![ERD Diagram](./prisma/ERD/diagram.png)
+![ERD Diagram](./prisma/erd/diagram.png)
 
 ## 💻 Contributing
 Feel free to fork this repo, open issues, or submit PRs.

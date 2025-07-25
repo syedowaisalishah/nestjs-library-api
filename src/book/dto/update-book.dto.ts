@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateBookDto } from './create-book.dto';
+import { z } from 'zod';
+import { CreateBookZodSchema } from './create-book.dto';
 
-export class UpdateBookDto extends PartialType(CreateBookDto) {}
+// Zod schema for updating a book (all fields optional)
+export const UpdateBookZodSchema = CreateBookZodSchema.partial();
+
+// Infer TypeScript type from Zod schema
+export type UpdateBookDto = z.infer<typeof UpdateBookZodSchema>;

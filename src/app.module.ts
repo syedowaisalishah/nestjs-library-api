@@ -1,11 +1,23 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import jwtConfig from './config/jwt.config'; // 👈 import config
 import { AuthorModule } from './author/author.module';
-import { PrismaService } from './prisma/prisma.service';
 import { BookModule } from './book/book.module';
+import { AuthModule } from './auth/auth.module';
+import { PrismaService } from './prisma/prisma.service';
 
 @Module({
-  imports: [AuthorModule, BookModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, //use config file 
+      load: [jwtConfig],
+    }),
+    AuthorModule,
+    BookModule,
+    AuthModule,
+  ],
   providers: [PrismaService],
-  exports: [PrismaService], // optional if used in other modules
+  exports: [PrismaService],
 })
 export class AppModule {}

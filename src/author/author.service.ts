@@ -1,35 +1,35 @@
+// src/author/author.service.ts
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { notFound } from '@hapi/boom';
+import { AuthorRepository } from './author.repository';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Injectable()
 export class AuthorService {
-  constructor(private prisma: PrismaService) {}
-
-  create(data: CreateAuthorDto) {
-    return this.prisma.author.create({ data });
-  }
+  constructor(private readonly authorRepo: AuthorRepository) {}
 
   findAll() {
-    return this.prisma.author.findMany({ include: { books: true } });
+    return this.authorRepo.findAll();
   }
 
-  findOne(id: number) {
-    return this.prisma.author.findUnique({
-      where: { id },
-      include: { books: true },
-    });
+  async findOne(id: number) {
+    const author = await this.authorRepo.findById(id);
+    if (!author) throw notFound('Author not found');
+    return author;
   }
 
-  update(id: number, data: UpdateAuthorDto) {
-    return this.prisma.author.update({
-      where: { id },
-      data,
-    });
+  async update(id: number, data: UpdateAuthorDto) {
+    const existing = await this.authorRepo.findById(id);
+    if (!existing) throw notFound('Author not found');
+
+    return this.authorRepo.update(id, data);
   }
 
-  remove(id: number) {
-    return this.prisma.author.delete({ where: { id } });
+  async remove(id: number) {
+    const existing = await this.authorRepo.findById(id);
+    if (!existing) throw notFound('Author not found');
+
+    return this.authorRepo.delete(id);
   }
 }
