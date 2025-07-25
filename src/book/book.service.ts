@@ -9,8 +9,8 @@ import { UpdateBookDto } from './dto/update-book.dto';
 export class BookService {
   constructor(private readonly bookRepo: BookRepository) {}
 
-  async create(data: CreateBookDto) {
-    const { authorId, title, isbn } = data;
+  async create(data: CreateBookDto, authorId: number) {
+    const { title, isbn } = data;
 
     const author = await this.bookRepo.findAuthorById(authorId);
     if (!author) {
@@ -30,7 +30,13 @@ export class BookService {
       );
     }
 
-    return this.bookRepo.create(data);
+    // Nest author relation properly for Prisma
+    return this.bookRepo.create({
+      title: data.title,
+      isbn: data.isbn,
+      publicationYear: data.publicationYear,
+      author: { connect: { id: authorId } }, // ✅ Fix here
+    });
   }
 
   async findAll() {

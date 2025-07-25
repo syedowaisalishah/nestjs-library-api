@@ -1,14 +1,14 @@
 // src/book/book.repository.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BookRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: CreateBookDto) {
+  async create(data: Prisma.BookCreateInput) {
     return this.prisma.book.create({ data });
   }
 
@@ -46,20 +46,19 @@ export class BookRepository {
     });
   }
 
- async findByTitleAndAuthor(title: string, authorId: number) {
-  return this.prisma.book.findFirst({
-    where: { title, authorId },
-  });
-}
+  async findByTitleAndAuthor(title: string, authorId: number) {
+    return this.prisma.book.findFirst({
+      where: { title, authorId },
+    });
+  }
 
-async findByIsbn(isbn: string) {
-  return this.prisma.book.findFirst({
-    where: { isbn },
-  });
-}
+  async findByIsbn(isbn: string) {
+    return this.prisma.book.findFirst({
+      where: { isbn },
+    });
+  }
 
-async findAuthorById(authorId: number) {
-  return this.prisma.author.findUnique({ where: { id: authorId } });
-}
-
+  async findAuthorById(authorId: number) {
+    return this.prisma.author.findUnique({ where: { id: authorId } });
+  }
 }
