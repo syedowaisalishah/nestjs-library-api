@@ -32,8 +32,6 @@ export class AuthorRepository {
   });
 }
 
-
-
   async update(id: number, data: UpdateAuthorDto) {
     return this.prisma.author.update({
       where: { id },

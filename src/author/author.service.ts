@@ -1,11 +1,9 @@
 // src/author/author.service.ts
 import { Injectable } from '@nestjs/common';
+import { notFound } from '@hapi/boom';
 import { AuthorRepository } from './author.repository';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
-import { Prisma } from '@prisma/client';
-import { CreateAuthorZodSchema } from './dto/create-author.dto';
-
 
 @Injectable()
 export class AuthorService {
@@ -15,16 +13,23 @@ export class AuthorService {
     return this.authorRepo.findAll();
   }
 
-  findOne(id: number) {
-    return this.authorRepo.findById(id);
+  async findOne(id: number) {
+    const author = await this.authorRepo.findById(id);
+    if (!author) throw notFound('Author not found');
+    return author;
   }
 
-  update(id: number, data: UpdateAuthorDto) {
+  async update(id: number, data: UpdateAuthorDto) {
+    const existing = await this.authorRepo.findById(id);
+    if (!existing) throw notFound('Author not found');
+
     return this.authorRepo.update(id, data);
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const existing = await this.authorRepo.findById(id);
+    if (!existing) throw notFound('Author not found');
+
     return this.authorRepo.delete(id);
   }
-  
 }
